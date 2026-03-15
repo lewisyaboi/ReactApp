@@ -1,9 +1,9 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState, useMemo } from "react";
 import {
   Alert,
-  FlatList,
+  ScrollView,
   SafeAreaView,
   Text,
   TextInput,
@@ -414,112 +414,109 @@ const resetToDefault = async () => {
               </TouchableOpacity>
             </View>
           )}
+        </View></View>
+        <ScrollView
+  style={{ flex: 1 }}      contentContainerStyle={{ flexGrow: 1,
+    padding: 16,
+    paddingBottom: 100,                  // same as your original
+  }}
+  showsVerticalScrollIndicator={false}   // optional: cleaner look
+>
+  {/* Header is already outside — we just render the list items directly */}
+  {(isEditMode ? templateExercises : exercises).map((item, index) => (
+    <View key={index} style={[styles.card, { padding: 12 }]}>
+      {isEditMode ? (
+        <View style={styles.row}>
+          <TextInput
+            style={styles.input}
+            value={item.name}
+            onChangeText={(text) => updateExercise(index, "name", text)}
+            placeholder="Exercise name"
+            placeholderTextColor="#888"
+          />
+          <TextInput
+            style={styles.input}
+            value={item.sets}
+            onChangeText={(text) => updateExercise(index, "sets", text)}
+            keyboardType="numeric"
+            placeholder="Sets"
+          />
+          <TextInput
+            style={styles.input}
+            value={item.reps}
+            onChangeText={(text) => updateExercise(index, "reps", text)}
+            placeholder="Reps (e.g. 8-12)"
+          />
+          <TextInput
+            style={styles.input}
+            value={displayWeight(item.weight, isMetric)}
+            onChangeText={(text) => {
+              const kgValue = inputToKg(text, isMetric);
+              updateExercise(index, "weight", kgValue);
+            }}
+            keyboardType="decimal-pad"
+            placeholder={`Weight (${isMetric ? "kg" : "lbs"})`}
+          />
+
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => removeExercise(index)}
+          >
+            <Ionicons name="trash" size={24} color="#f44336" />
+          </TouchableOpacity>
         </View>
-        <FlatList
-          data={isEditMode ? templateExercises : exercises}
-          keyExtractor={(_, index) => index.toString()}
-          renderItem={({ item, index }) => (
-            <View style={[styles.card, { padding: 12 }]}>
-              {isEditMode ? (
-                <><View style={styles.row}>
-                  <TextInput
-                    style={styles.input}
-                    value={item.name}
-                    onChangeText={(text) => updateExercise(index, "name", text)}
-                    placeholder="Exercise name"
-                    placeholderTextColor="#888"
-                  />
-                    <TextInput
-                      style={styles.input}
-                      value={item.sets}
-                      onChangeText={(text) => updateExercise(index, "sets", text)}
-                      keyboardType="numeric"
-                      placeholder="Sets"
-                    />
-                    <TextInput
-                      style={styles.input}
-                      value={item.reps}
-                      onChangeText={(text) => updateExercise(index, "reps", text)}
-                      placeholder="Reps (e.g. 8-12)"
-                    />
-                  <TextInput
-                    style={styles.input}
-                    value={displayWeight(item.weight, isMetric)}
-                    onChangeText={(text) => {
-                      const kgValue = inputToKg(text, isMetric);
-                      updateExercise(index, "weight", kgValue);
-                    }}
-                    keyboardType="decimal-pad"
-                    placeholder={`Weight (${isMetric ? "kg" : "lbs"})`}
-                  />
+      ) : (
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <TouchableOpacity
+            style={globalStyles.checkboxContainer}
+            onPress={() => toggleDone(index)}
+          >
+            <View
+              style={[
+                globalStyles.checkbox,
+                item.done && globalStyles.checkboxDone,
+              ]}
+            >
+              {item.done && <Text style={globalStyles.checkmark}>✓</Text>}
+            </View>
+          </TouchableOpacity>
 
-                  <TouchableOpacity
-                    style={[styles.actionButton]}
-                    onPress={() => removeExercise(index)}
-                  >
-                    <Ionicons name="trash" size={24} color="#f44336" />
-                  </TouchableOpacity></View>
-                </>
-              ) : (
-                <>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <TouchableOpacity
-                      style={globalStyles.checkboxContainer}
-                      onPress={() => toggleDone(index)}
-                    >
-                      <View
-                        style={[
-                          globalStyles.checkbox,
-                          item.done && globalStyles.checkboxDone,
-                        ]}
-                      >
-                        {item.done && <Text style={globalStyles.checkmark}>✓</Text>}
-                      </View>
-                    </TouchableOpacity>
+          <View style={{ flex: 1, marginLeft: 12 }}>
+            <Text style={styles.exerciseName}>{item.name}</Text>
+            <Text style={styles.exercisesText}>
+              {item.sets} sets × {item.reps}
+            </Text>
+            <Text style={styles.exercisesText}>
+              Weight: {displayWeight(item.weight, isMetric)} {isMetric ? "kg" : "lbs"}
+            </Text>
+          </View>
 
-                    <View style={{ flex: 1, marginLeft: 12 }}>
-                      <Text style={styles.exerciseName}>{item.name}</Text>
-                      <Text style={styles.exercisesText}>
-                        {item.sets} sets × {item.reps}
-                      </Text>
-                      <Text style={styles.exercisesText}>
-                        Weight: {displayWeight(item.weight, isMetric)} {isMetric ? "kg" : "lbs"}
-                      </Text>
-                    </View>
+          <Text style={{ color: item.done ? "#4CAF50" : "#888" }}>
+            {item.done ? "Done" : ""}
+          </Text>
+        </View>
+      )}
+    </View>
+  ))}
 
-                    <Text style={{ color: item.done ? "#4CAF50" : "#888" }}>
-                      {item.done ? "Done" : ""}
-                    </Text>
-                  </View>
-                </>
-              )}
-            </View>)}
-          ListFooterComponent={
-            <>
-              {isEditMode && (
-                <>
-                  <TouchableOpacity style={styles.saveButton} onPress={saveTemplate}>
-                    <Text style={{ color: "white", fontWeight: "bold" }}>Save Changes</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.cancelButton} onPress={cancelEdit}>
-                    <Text style={{ color: "white", fontWeight: "bold" }}>Cancel</Text>
-                  </TouchableOpacity>
-                </>
-              )}
+  {/* Footer content — same as ListFooterComponent */}
+  {isEditMode && (
+    <>
+      <TouchableOpacity style={styles.saveButton} onPress={saveTemplate}>
+        <Text style={{ color: "white", fontWeight: "bold" }}>Save Changes</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.cancelButton} onPress={cancelEdit}>
+        <Text style={{ color: "white", fontWeight: "bold" }}>Cancel</Text>
+      </TouchableOpacity>
+    </>
+  )}
 
-              {!isEditMode && (
-                <TouchableOpacity
-                  style={globalStyles.backButton}
-                  onPress={() => router.back()}
-                >
-                  <Text style={globalStyles.backText}>Back to Plan</Text>
-                </TouchableOpacity>
-              )}
-            </>
-          }
-          contentContainerStyle={{ padding: 16, paddingBottom: 100 }}
-        />
-      </View>
+  {!isEditMode && (
+    <TouchableOpacity style={globalStyles.backButton}><Link href={{pathname: "/"}}>
+      <Text style={globalStyles.backText}>Back to Plan</Text>
+    </Link></TouchableOpacity>
+  )}
+</ScrollView>
     </SafeAreaView>
   );
 }

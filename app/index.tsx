@@ -135,7 +135,7 @@ export default function HomeScreen() {
     <SafeAreaView
       style={[
         globalStyles.safeArea,
-        { backgroundColor: themedColors.back, flex: 1 },
+        { backgroundColor: themedColors.back},
       ]}
     >
       <ScrollView

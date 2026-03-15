@@ -43,7 +43,8 @@ export default function RootLayout() {
               <Ionicons
                 name="settings-outline"
                 size={24}
-                style={{ paddingLeft: 5 }}
+                style={{ paddingLeft: 5, marginRight: 20
+                 }}
               />
             </TouchableOpacity>
           ),

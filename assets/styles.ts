@@ -26,6 +26,7 @@ export const globalStyles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 270,
     backgroundColor: COLORS.back,
+    flex: 1,
   },
   headerRow: {
     flexDirection: 'row',
