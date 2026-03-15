@@ -116,7 +116,6 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        {/* Buttons Row */}
         <View style={{ flexDirection: "row", gap: 16, marginBottom: 10 }}>
           <Link href="/calendar" asChild style={[styles.card, { flex: 1 }]}>
             <TouchableOpacity>
