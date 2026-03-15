@@ -36,8 +36,6 @@ export const globalStyles = StyleSheet.create({
   logo: {
     width: 80,
     height: 80,
-    resizeMode: 'contain',
-    borderRadius: 20,
     marginRight: 16,
   },
   titleColumn: {
