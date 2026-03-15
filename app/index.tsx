@@ -109,7 +109,12 @@ export default function HomeScreen() {
         
         {/* Header Section */}
         <View style={globalStyles.headerRow}>
-          <Image source={{uri:'/logo.png'}} style={[globalStyles.logo, { width: 80, height: 80, resizeMode: 'contain' }]}  />
+          <Image source={{uri:'/logo.png'}} style={[globalStyles.logo, { width: 80,               // Set an explicit pixel width
+        height: 80,              // Set an explicit pixel height
+        minWidth: 80,            // Ensure it doesn't shrink
+        minHeight: 80,
+        resizeMode: 'contain',
+        backgroundColor: 'transparent' }]}  />
           <View style={globalStyles.titleColumn}>
             <Text style={styles.appTitle}>LIFT GOOD</Text>
             <Text style={styles.date}>{today}</Text>
