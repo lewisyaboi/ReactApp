@@ -9,6 +9,7 @@ import {
   View,
   StyleSheet,
 } from "react-native";
+import logo from "../public/logo.png";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { globalStyles, COLORS } from "../assets/styles";
 import { useThemeStore } from "../assets/themeStore";
@@ -109,7 +110,7 @@ export default function HomeScreen() {
         
         {/* Header Section */}
         <View style={globalStyles.headerRow}>
-          <Image source={{uri:'https://pbs.twimg.com/media/GkMq1KUbUAAE3U9.png'}} style={globalStyles.logo}  />
+          <Image source={logo} style={globalStyles.logo}  />
           <View style={globalStyles.titleColumn}>
             <Text style={styles.appTitle}>LIFT GOOD1</Text>
             <Text style={styles.date}>{today}</Text>
