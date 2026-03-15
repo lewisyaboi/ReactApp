@@ -109,7 +109,7 @@ export default function HomeScreen() {
         
         {/* Header Section */}
         <View style={globalStyles.headerRow}>
-          <Image source={{uri:'/logo.png'}} style={[globalStyles.logo, { width: 80,               // Set an explicit pixel width
+          <Image source={{uri:'https://reactnative.dev'}} style={[globalStyles.logo, { width: 80,               // Set an explicit pixel width
         height: 80,              // Set an explicit pixel height
         minWidth: 80,            // Ensure it doesn't shrink
         minHeight: 80,
