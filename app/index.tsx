@@ -9,6 +9,7 @@ import {
   View,
   StyleSheet,
 } from "react-native";
+import { Asset } from 'expo-asset'; 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { globalStyles, COLORS } from "../assets/styles";
 import { useThemeStore } from "../assets/themeStore";
@@ -97,6 +98,7 @@ export default function HomeScreen() {
       loadCompletions();
     }, [loadCompletions])
   );
+  const logoAsset = Asset.fromModule(require("../assets/images/logo.png"));
 
   return (
   <SafeAreaView style={[globalStyles.safeArea, { backgroundColor: themedColors.back, flex: 1 }]}>
@@ -109,14 +111,14 @@ export default function HomeScreen() {
         
         {/* Header Section */}
         <View style={globalStyles.headerRow}>
-          <Image source={{uri:'./logo.png'}} style={[{ width: 80,               // Set an explicit pixel width
+          <Image source={{ uri: logoAsset.uri }} style={[globalStyles.logo, { width: 80,               // Set an explicit pixel width
         height: 80,              // Set an explicit pixel height
         minWidth: 80,            // Ensure it doesn't shrink
         minHeight: 80,
         resizeMode: 'contain',
         backgroundColor: 'transparent' }]}  />
           <View style={globalStyles.titleColumn}>
-            <Text style={styles.appTitle}>LIFT GOOD1</Text>
+            <Text style={styles.appTitle}>LIFT GOOD</Text>
             <Text style={styles.date}>{today}</Text>
           </View>
         </View>
