@@ -109,14 +109,9 @@ export default function HomeScreen() {
         
         {/* Header Section */}
         <View style={globalStyles.headerRow}>
-          <Image source={require("../assets/images/logo.png")} style={[globalStyles.logo, { width: 80,               // Set an explicit pixel width
-        height: 80,              // Set an explicit pixel height
-        minWidth: 80,            // Ensure it doesn't shrink
-        minHeight: 80,
-        resizeMode: 'contain',
-        backgroundColor: 'transparent' }]}  />
+          <Image source={require('https://pbs.twimg.com/media/GkMq1KUbUAAE3U9.png')} style={globalStyles.logo}  />
           <View style={globalStyles.titleColumn}>
-            <Text style={styles.appTitle}>LIFT GOOD</Text>
+            <Text style={styles.appTitle}>LIFT GOOD1</Text>
             <Text style={styles.date}>{today}</Text>
           </View>
         </View>
