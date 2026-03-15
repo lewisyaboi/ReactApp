@@ -9,13 +9,12 @@ import {
   View,
   StyleSheet,
 } from "react-native";
-import logo from "../public/logo.png";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { globalStyles, COLORS } from "../assets/styles";
 import { useThemeStore } from "../assets/themeStore";
 
 const today = 'Friday 13 March 2026';//new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" }).replace(/,/g, "");
-
+const logo = require("../public/logo.png");
 const STORAGE_KEY_PREFIX = "workout-day-";
 
 const initialPlan = [
