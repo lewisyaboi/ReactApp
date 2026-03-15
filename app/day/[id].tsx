@@ -124,9 +124,7 @@ export default function DayDetail() {
       ...COLORS,
       back: theme === 0 ? "#EEE" : theme === 2 ? "#888" : "#000",
       conback: theme === 0 ? "#FFF" : "rgba(255, 255, 255, 0.22)",
-      text: theme === 0 ? "#000" : theme === 2 ? "#FFF" : "#FFF",
-      inputBg: theme === 0 ? "#f9f9f9" : "#333",
-      border: theme === 0 ? "#ddd" : "#555",
+      text: theme === 0 ? "#000" : theme === 2 ? "#FFF" : "#FFF"
     }),
     [theme]
   );
@@ -141,10 +139,8 @@ export default function DayDetail() {
         exerciseName: { ...globalStyles.exerciseName, color: themedColors.text },
         exercisesText: { ...globalStyles.exercisesText, color: themedColors.text },
         input: {
-          backgroundColor: themedColors.inputBg,
           color: themedColors.text,
           borderWidth: 1,
-          borderColor: themedColors.border,
           borderRadius: 6,
           padding: 8,
         },
@@ -396,6 +392,9 @@ const resetToDefault = async () => {
 
   return (
     <SafeAreaView style={globalStyles.safeArea}>
+      <ScrollView
+  style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, padding: 16, paddingBottom: 100, backgroundColor: themedColors.back,               // same as your original
+  }} showsVerticalScrollIndicator={false}>
       <View style={styles.container}>
         <View style={styles.headerRow}>
           <Text style={styles.subtitle}>{initialWorkoutData[id].focus}</Text>
@@ -414,14 +413,7 @@ const resetToDefault = async () => {
               </TouchableOpacity>
             </View>
           )}
-        </View></View>
-        <ScrollView
-  style={{ flex: 1 }}      contentContainerStyle={{ flexGrow: 1,
-    padding: 16,
-    paddingBottom: 100,                  // same as your original
-  }}
-  showsVerticalScrollIndicator={false}   // optional: cleaner look
->
+        </View>
   {/* Header is already outside — we just render the list items directly */}
   {(isEditMode ? templateExercises : exercises).map((item, index) => (
     <View key={index} style={[styles.card, { padding: 12 }]}>
@@ -515,7 +507,7 @@ const resetToDefault = async () => {
     <TouchableOpacity style={globalStyles.backButton}><Link href={{pathname: "/"}}>
       <Text style={globalStyles.backText}>Back to Plan</Text>
     </Link></TouchableOpacity>
-  )}
+  )}</View>
 </ScrollView>
     </SafeAreaView>
   );
