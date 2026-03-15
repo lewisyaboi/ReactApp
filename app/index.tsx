@@ -111,7 +111,7 @@ export default function HomeScreen() {
         <View style={globalStyles.headerRow}>
           <Image source={{uri:'/logo.png'}} style={globalStyles.logo} />
           <View style={globalStyles.titleColumn}>
-            <Text style={styles.appTitle}>LIFT GOOD</Text>
+            <Text style={styles.appTitle}>LIFT GOOD!</Text>
             <Text style={styles.date}>{today}</Text>
           </View>
         </View>
@@ -178,4 +178,8 @@ export default function HomeScreen() {
     </ScrollView>
   </SafeAreaView>
 );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 2a59ccb8cd7e3cc069d53ade1d88299a18c5a2f0
