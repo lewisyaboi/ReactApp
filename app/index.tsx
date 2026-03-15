@@ -178,8 +178,4 @@ export default function HomeScreen() {
     </ScrollView>
   </SafeAreaView>
 );
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 2a59ccb8cd7e3cc069d53ade1d88299a18c5a2f0
