@@ -1,7 +1,7 @@
 import { Link, useFocusEffect } from "expo-router";           // ← add useFocusEffect
 import { useState, useMemo, useCallback } from "react";      // ← add useCallback
 import {
-  FlatList,
+  ScrollView,
   Image,
   SafeAreaView,
   Text,
@@ -99,64 +99,83 @@ export default function HomeScreen() {
   );
 
   return (
-    <SafeAreaView style={globalStyles.safeArea}>
-      <View style={styles.container}>
+  <SafeAreaView style={[globalStyles.safeArea, { backgroundColor: themedColors.back, flex: 1 }]}>
+    <ScrollView 
+      style={{ backgroundColor: themedColors.back }} 
+      contentContainerStyle={{ flexGrow: 1 }} 
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={[styles.container, { flex: 1, paddingBottom: 20 }]}>
+        
+        {/* Header Section */}
         <View style={globalStyles.headerRow}>
           <Image source={require("../assets/images/logo.png")} style={globalStyles.logo} />
           <View style={globalStyles.titleColumn}>
-            <Text style={styles.appTitle}>LIFT GOOD</Text>
+            <Text style={styles.appTitle}>LIFT GOOD!</Text>
             <Text style={styles.date}>{today}</Text>
           </View>
-        </View><View style={{flexDirection: "row", gap: 16 }}>
+        </View>
+
+        {/* Buttons Row */}
+        <View style={{ flexDirection: "row", gap: 16, marginBottom: 10 }}>
           <Link href="/calendar" asChild style={[styles.card, { flex: 1 }]}>
-      <TouchableOpacity>
-        <Text style={[styles.dayText, {flex:1, textAlign:"center"}]}>Profile</Text>
-        </TouchableOpacity></Link>
-      <Link href="/calendar" asChild style={[styles.card, { flex: 1 }]}>
-        <TouchableOpacity>
-        <Text style={[styles.dayText, {flex:1, textAlign:"center"}]}>Statistics</Text>
-        </TouchableOpacity></Link></View>
+            <TouchableOpacity>
+              <Text style={[styles.dayText, { textAlign: "center" }]}>Profile</Text>
+            </TouchableOpacity>
+          </Link>
+          <Link href="/calendar" asChild style={[styles.card, { flex: 1 }]}>
+            <TouchableOpacity>
+              <Text style={[styles.dayText, { textAlign: "center" }]}>Statistics</Text>
+            </TouchableOpacity>
+          </Link>
+        </View>
+
         <Text style={styles.subtitle}>Weekly Workout Plan</Text>
 
-        <FlatList
-          data={plan}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => {
-            const completed = completedDays[item.id];
-            const isCompleted = completed?.done;
+        {/* --- REPLACED FLATLIST WITH THIS MAP --- */}
+        {plan.map((item) => {
+          const completed = completedDays[item.id];
+          const isCompleted = completed?.done;
 
-            return (
-              <Link
-                href={{
-                  pathname: "/day/[id]",
-                  params: { id: item.id, dayName: item.day },
-                }}
-                asChild
-              >
-                <TouchableOpacity style={styles.card}>
-                  <View style={globalStyles.cardContent}>
-                    <Text style={[styles.dayText,{ marginTop: 20, marginBottom: 20 }]}>{item.day} - {item.focus}</Text>
-                  </View>
+          return (
+            <Link
+              key={item.id}
+              href={{
+                pathname: "/day/[id]",
+                params: { id: item.id, dayName: item.day },
+              }}
+              asChild
+            >
+              <TouchableOpacity style={styles.card}>
+                <View style={globalStyles.cardContent}>
+                  <Text style={[styles.dayText, { marginTop: 20, marginBottom: 20 }]}>
+                    {item.day} - {item.focus}
+                  </Text>
+                </View>
 
-                  {isCompleted ? (
-                    <Text style={[styles.done, { fontSize: 16 }]}>Done</Text>
-                  ) : (
-                    <Text style={styles.arrow}>→</Text>
-                  )}
-                </TouchableOpacity>
-              </Link>);            
-          }}
-          ListFooterComponent={
-          <TouchableOpacity
-                  style={globalStyles.backButton}
-                  onPress={() => router.back()}
-                >
-                  <Text style={globalStyles.backText}>Complete Week</Text>
-                </TouchableOpacity>}
-        />
+                {isCompleted ? (
+                  <Text style={[styles.done, { fontSize: 16 }]}>Done</Text>
+                ) : (
+                  <Text style={styles.arrow}>→</Text>
+                )}
+              </TouchableOpacity>
+            </Link>
+          );
+        })}
 
-        <Text style={styles.footer}>Tap a day to see exercises</Text>
+        {/* Footer Component from FlatList moved here */}
+        <TouchableOpacity
+          style={[globalStyles.backButton, { marginTop: 20 }]}
+          onPress={() => {/* Add your logic here */}}
+        >
+          <Text style={globalStyles.backText}>Complete Week</Text>
+        </TouchableOpacity>
+
+        <Text style={[styles.footer, { marginTop: 20, textAlign: 'center' }]}>
+          Tap a day to see exercises
+        </Text>
       </View>
-    </SafeAreaView>
-  );
+    </ScrollView>
+  </SafeAreaView>
+);
 }
