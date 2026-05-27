@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useState, useMemo } from 'react'; // 👈 Added useMemo
+import { useState, useMemo } from 'react';
 import {
   TouchableOpacity,
   StyleSheet,
@@ -21,16 +21,16 @@ export default function RootLayout() {
   const [showExtraBar, setShowExtraBar] = useState(false);
 
   // Theme Subscriptions
-  const currentTheme = useThemeStore((s) => s.theme); // 👈 Active theme subscription (0=Light, 1=Dark, 2=Glass)
+  const currentTheme = useThemeStore((s) => s.theme); // (0=Light, 1=Dark, 2=Glass)
   const setTheme = useThemeStore((s) => s.setTheme);
 
   // Units
   const isMetric = useUnitsStore((s) => s.isMetric);
   const toggleUnit = useUnitsStore((s) => s.toggleUnit);
 
-  // 🚀 Dynamically compute colors based on theme index
+  // Dynamically compute colors based on theme index
   const headerTextColor = useMemo(() => {
-    return currentTheme === 0 ? '#000' : '#fff'; // Black for Light mode, White for Dark/Glass
+    return currentTheme === 0 ? '#000' : '#fff';
   }, [currentTheme]);
 
   return (
@@ -38,10 +38,19 @@ export default function RootLayout() {
       <Stack
         screenOptions={{
           headerTransparent: true,
-          headerStyle: { backgroundColor: 'rgba(255, 255, 255, 0.22)' },
+          headerTitleAlign: 'center', // 🚀 FIXED: This centers the title on both Android and iOS
           headerTitleStyle: { fontWeight: 'bold' },
-          headerStyle: { backgroundColor: 'rgba(255, 255, 255, 0.22)' },
-          headerTintColor: headerTextColor, // 👈 ✅ Title and back arrows turn black in light mode
+          headerTintColor: headerTextColor, 
+          // Create a multi-layered background wrapper
+          headerBackground: () => (
+            <View style={StyleSheet.absoluteFillObject}>
+              {/* Layer 1 (Bottom): Semi-transparent black overlay */}
+              <View style={[StyleSheet.absoluteFillObject, { backgroundColor: 
+                currentTheme === 0 ? 'rgba(255, 255, 255, 0.9)' : currentTheme === 2 ? 'rgba(136, 136, 136, 0.9)' : 'rgba(0, 0, 0, 0.9)' }]} />
+              {/* Layer 2 (Top): Your original light overlay */}
+              <View style={[StyleSheet.absoluteFillObject, { backgroundColor: 'rgba(255, 255, 255, 0.22)' }]} />
+            </View>
+          ),
           headerRight: () => (
             <TouchableOpacity
               onPress={() => setShowExtraBar((prev) => !prev)}
@@ -50,7 +59,7 @@ export default function RootLayout() {
               <Ionicons
                 name="settings-outline"
                 size={24}
-                color={headerTextColor} // 👈 ✅ Settings icon turns black in light mode
+                color={headerTextColor}
                 style={{ paddingLeft: 5, marginRight: 20 }}
               />
             </TouchableOpacity>
@@ -94,16 +103,15 @@ export default function RootLayout() {
               setShowExtraBar(false);
               toggleUnit();
             }}
-            style={styles.button3}
+            style={[styles.button3, { backgroundColor: '#fff' }]}
           >
-            <Text style={{ color: '#fff' }}>
+            <Text style={{ color: '#000' }}>
               {isMetric ? 'kg' : 'lbs'}
             </Text>
           </TouchableOpacity>
         </View>
       )}
 
-      {/* Update StatusBar dynamically to match screen visibility */}
       <StatusBar style={currentTheme === 0 ? "dark" : "light"} />
     </>
   );
@@ -112,10 +120,10 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   extraBar: {
     position: 'absolute',
-    top: 90, // 👈 Adjusted lower so it sits cleanly below your transparent header
-    right: 20, // 👈 Adjusted closer to the right under the settings button
+    top: 75, 
+    right: 20, 
     flexDirection: 'column',
-    zIndex: 999, // 👈 Raised zIndex to make sure it floats cleanly over the cards
+    zIndex: 999, 
     borderRadius: 8,
     overflow: 'hidden',
     shadowColor: "#000",
