@@ -568,7 +568,7 @@ export default function DayDetail() {
           )}
 
           {!isEditMode && (
-            <Link href={{ pathname: "/" }}>
+            <Link href={"/"} asChild>
               <TouchableOpacity style={globalStyles.backButton}>
                 <Text style={globalStyles.backText}>Back To Plan</Text>
               </TouchableOpacity>
