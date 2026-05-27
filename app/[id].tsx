@@ -1,7 +1,8 @@
 import { useUnitsStore } from "@/assets/unitStore"; // adjust path if needed
 import { Ionicons } from "@expo/vector-icons";
+import { useHeaderHeight } from '@react-navigation/elements';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Link, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useMemo, useState } from "react";
 import {
   Alert,
@@ -13,8 +14,8 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { COLORS, globalStyles } from "../../assets/styles";
-import { useThemeStore } from "../../assets/themeStore";
+import { COLORS, globalStyles } from "../assets/styles";
+import { useThemeStore } from "../assets/themeStore";
 
 const STORAGE_KEY_PREFIX = "workout-day-";
 const TEMPLATE_KEY_PREFIX = "workout-template-";
@@ -108,6 +109,8 @@ type Exercise = ExerciseTemplate & {
 
 export default function DayDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const headerHeight = useHeaderHeight();
+  const router = useRouter(); // 👈 Instantiated the router hook
 
   const [isEditMode, setIsEditMode] = useState(false);
   const [exercises, setExercises] = useState<Exercise[]>([]);
@@ -249,7 +252,7 @@ export default function DayDetail() {
         // 2. Create the date string (matching the format in your Home Screen)
         const now = new Date();
         // This creates YYYY-MM-DD using your local time instead of UTC
-        const localISODate = // Add this to test: '2026-03-14';
+        const localISODate =
           now.getFullYear() +
           "-" +
           String(now.getMonth() + 1).padStart(2, "0") +
@@ -343,8 +346,6 @@ export default function DayDetail() {
                 "Reset Complete",
                 "Template restored to original values.",
               );
-              // Optional: exit edit mode automatically after reset
-              // setIsEditMode(false);
             } catch (e) {
               console.error("Reset error", e);
               Alert.alert("Error", "Could not reset template");
@@ -433,8 +434,9 @@ export default function DayDetail() {
         contentContainerStyle={{
           flexGrow: 1,
           padding: 16,
+          paddingTop: headerHeight + 10,
           paddingBottom: 100,
-          backgroundColor: themedColors.back, // same as your original
+          backgroundColor: themedColors.back,
         }}
         showsVerticalScrollIndicator={false}
       >
@@ -465,7 +467,7 @@ export default function DayDetail() {
               </View>
             )}
           </View>
-          {/* Header is already outside — we just render the list items directly */}
+
           {(isEditMode ? templateExercises : exercises).map((item, index) => (
             <View key={index} style={[styles.card, { padding: 12 }]}>
               {isEditMode ? (
@@ -545,7 +547,6 @@ export default function DayDetail() {
             </View>
           ))}
 
-          {/* Footer content — same as ListFooterComponent */}
           {isEditMode && (
             <>
               <TouchableOpacity
@@ -567,12 +568,20 @@ export default function DayDetail() {
             </>
           )}
 
+          {/* 👈 Replaced old <Link> structure with clean router action */}
           {!isEditMode && (
-            <Link href="/" asChild>
-              <TouchableOpacity style={globalStyles.backButton}>
-                <Text style={globalStyles.backText}>Back To Plan</Text>
-              </TouchableOpacity>
-            </Link>
+            <TouchableOpacity 
+              style={globalStyles.backButton}
+              onPress={() => {
+                if (router.canGoBack()) {
+                  router.dismissAll(); // Clears all history so index becomes bottom of stack again
+                } else {
+                  router.replace('/'); // Safeguard callback
+                }
+              }}
+            >
+              <Text style={globalStyles.backText}>Back To Plan</Text>
+            </TouchableOpacity>
           )}
         </View>
       </ScrollView>

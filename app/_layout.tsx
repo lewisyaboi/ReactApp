@@ -1,6 +1,6 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
+import { useState, useMemo } from 'react'; // 👈 Added useMemo
 import {
   TouchableOpacity,
   StyleSheet,
@@ -10,9 +10,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 
 import { useThemeStore } from '../assets/themeStore';
-import { useUnitsStore } from '../assets/unitStore'; // ← new import
+import { useUnitsStore } from '../assets/unitStore';
 
-// Optional: define expected params
 type DayRouteParams = {
   id: string;
   dayName?: string;
@@ -21,21 +20,28 @@ type DayRouteParams = {
 export default function RootLayout() {
   const [showExtraBar, setShowExtraBar] = useState(false);
 
-  // Theme
-  const theme = useThemeStore((s) => s.setTheme);
+  // Theme Subscriptions
+  const currentTheme = useThemeStore((s) => s.theme); // 👈 Active theme subscription (0=Light, 1=Dark, 2=Glass)
+  const setTheme = useThemeStore((s) => s.setTheme);
 
   // Units
   const isMetric = useUnitsStore((s) => s.isMetric);
   const toggleUnit = useUnitsStore((s) => s.toggleUnit);
-  // or use setIsMetric if you prefer explicit true/false
+
+  // 🚀 Dynamically compute colors based on theme index
+  const headerTextColor = useMemo(() => {
+    return currentTheme === 0 ? '#000' : '#fff'; // Black for Light mode, White for Dark/Glass
+  }, [currentTheme]);
 
   return (
     <>
       <Stack
         screenOptions={{
+          headerTransparent: true,
           headerStyle: { backgroundColor: 'rgba(255, 255, 255, 0.22)' },
           headerTitleStyle: { fontWeight: 'bold' },
-          contentStyle: { backgroundColor: 'rgba(255, 255, 255, 0.22)' },
+          headerStyle: { backgroundColor: 'rgba(255, 255, 255, 0.22)' },
+          headerTintColor: headerTextColor, // 👈 ✅ Title and back arrows turn black in light mode
           headerRight: () => (
             <TouchableOpacity
               onPress={() => setShowExtraBar((prev) => !prev)}
@@ -44,8 +50,8 @@ export default function RootLayout() {
               <Ionicons
                 name="settings-outline"
                 size={24}
-                style={{ paddingLeft: 5, marginRight: 20
-                 }}
+                color={headerTextColor} // 👈 ✅ Settings icon turns black in light mode
+                style={{ paddingLeft: 5, marginRight: 20 }}
               />
             </TouchableOpacity>
           ),
@@ -54,7 +60,7 @@ export default function RootLayout() {
         <Stack.Screen name="index" options={{ title: 'Home' }} />
         <Stack.Screen name="calendar" options={{ title: 'Statistics' }} />
         <Stack.Screen
-          name="day/[id]"
+          name="[id]"
           options={({ route }) => ({
             title:
               (route.params as DayRouteParams | undefined)?.dayName ??
@@ -62,26 +68,27 @@ export default function RootLayout() {
           })}
         />
       </Stack>
+
       {/* The small container that appears below header when toggled */}
       {showExtraBar && (
         <View style={styles.extraBar}>
           <TouchableOpacity
-            onPress={() => {setShowExtraBar(false); theme(0);}}
+            onPress={() => { setShowExtraBar(false); setTheme(0); }}
             style={styles.button1}>
-          <Text style={{color: '#000'}}>Light</Text>
+            <Text style={{ color: '#000' }}>Light</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => {setShowExtraBar(false); theme(1);}}
+            onPress={() => { setShowExtraBar(false); setTheme(1); }}
             style={styles.button2}>
-            <Text style={{color: '#fff'}}>Dark</Text>
+            <Text style={{ color: '#fff' }}>Dark</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => {setShowExtraBar(false); theme(2);}}
+            onPress={() => { setShowExtraBar(false); setTheme(2); }}
             style={styles.button3}>
-            <Text style={{color: '#fff'}}>Glass</Text>
+            <Text style={{ color: '#fff' }}>Glass</Text>
           </TouchableOpacity>
           
-          {/* New: Unit switch (kg / lbs) */}
+          {/* Unit switch (kg / lbs) */}
           <TouchableOpacity
             onPress={() => {
               setShowExtraBar(false);
@@ -89,40 +96,41 @@ export default function RootLayout() {
             }}
             style={styles.button3}
           >
-            <Text style={{color: '#fff'}}>
+            <Text style={{ color: '#fff' }}>
               {isMetric ? 'kg' : 'lbs'}
             </Text>
           </TouchableOpacity>
         </View>
       )}
 
-      <StatusBar style="dark" backgroundColor="#f8f9fa" />
+      {/* Update StatusBar dynamically to match screen visibility */}
+      <StatusBar style={currentTheme === 0 ? "dark" : "light"} />
     </>
   );
 }
 
-
 const styles = StyleSheet.create({
   extraBar: {
     position: 'absolute',
-    top: 0, // will sit right under header (adjust if needed)
-    right: 100,
-
+    top: 90, // 👈 Adjusted lower so it sits cleanly below your transparent header
+    right: 20, // 👈 Adjusted closer to the right under the settings button
     flexDirection: 'column',
-    zIndex: 0,
-
+    zIndex: 999, // 👈 Raised zIndex to make sure it floats cleanly over the cards
+    borderRadius: 8,
+    overflow: 'hidden',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  extraBarText: {
-    fontSize: 15,
-    color: '#333',
+  button1: {
+    backgroundColor: '#fff', padding: 10, width: 100, alignItems: 'center'
   },
-  button1:{
-    backgroundColor: '#fff', padding:6, width:100
+  button2: {
+    backgroundColor: '#1C1C1E', padding: 10, width: 100, alignItems: 'center', borderTopWidth: 0.5, borderTopColor: '#333'
   },
-  button2:{
-    backgroundColor: '#000', padding:6, width:100
-  },
-  button3:{
-    backgroundColor: '#888', padding:6, width:100
+  button3: {
+    backgroundColor: '#444', padding: 10, width: 100, alignItems: 'center', borderTopWidth: 0.5, borderTopColor: '#555'
   }
 });

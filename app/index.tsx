@@ -1,15 +1,16 @@
-import { Link, useFocusEffect } from "expo-router"; // ← add useFocusEffect
-import { useState, useMemo, useCallback } from "react"; // ← add useCallback
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useHeaderHeight } from "@react-navigation/elements";
+import { Link, useFocusEffect } from "expo-router";
+import { useCallback, useMemo, useState } from "react";
 import {
-  ScrollView,
   SafeAreaView,
+  ScrollView,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  StyleSheet,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { globalStyles, COLORS } from "../assets/styles";
+import { COLORS, globalStyles } from "../assets/styles";
 import { useThemeStore } from "../assets/themeStore";
 
 const today = new Date()
@@ -27,22 +28,22 @@ const initialPlan = [
   {
     id: "1",
     day: "Day 1",
-    focus: "Squat", // exercisesSummary: "Bench Press, Incline Press, Dips"
+    focus: "Squat",
   },
   {
     id: "2",
     day: "Day 2",
-    focus: "Bench", // exercisesSummary: "Pull-Ups, Rows, Curls"
+    focus: "Bench",
   },
   {
     id: "3",
     day: "Day 3",
-    focus: "Deadlift", // exercisesSummary: "Squats, Deadlifts, Lunges"
+    focus: "Deadlift",
   },
   {
     id: "4",
     day: "Day 4",
-    focus: "Accessories", // exercisesSummary: "Overhead Press, Raises, Plank"
+    focus: "Accessories",
   },
 ];
 
@@ -52,6 +53,7 @@ export default function HomeScreen() {
     Record<string, { done: boolean; date?: string }>
   >({});
   const theme = useThemeStore((state) => state.theme);
+  const headerHeight = useHeaderHeight();
 
   const themedColors = useMemo(
     () => ({
@@ -111,7 +113,6 @@ export default function HomeScreen() {
 
           newCompleted[day.id] = {
             done: allDone,
-            // We assume your day detail screen saves the 'date' into the object when finished
             date: allDone ? parsed.completedAt || today : undefined,
           };
         } else {
@@ -124,7 +125,6 @@ export default function HomeScreen() {
     }
   }, []);
 
-  // This runs every time the home screen regains focus (including after back navigation)
   useFocusEffect(
     useCallback(() => {
       loadCompletions();
@@ -133,20 +133,17 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView
-      style={[
-        globalStyles.safeArea,
-        { backgroundColor: themedColors.back},
-      ]}
+      style={[globalStyles.safeArea, { backgroundColor: themedColors.back }]}
     >
       <ScrollView
         style={{ backgroundColor: themedColors.back }}
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{ flexGrow: 1, paddingTop: headerHeight + 10 }}
         showsVerticalScrollIndicator={false}
       >
         <View style={[styles.container, { flex: 1, paddingBottom: 20 }]}>
           {/* Header Section */}
           <View style={globalStyles.headerRow}>
-            <img src='/logo.png' style={globalStyles.logo} />
+            <img src="/logo.png" style={globalStyles.logo} />
             <View style={globalStyles.titleColumn}>
               <Text style={styles.appTitle}>LIFT GOOD</Text>
               <Text style={styles.date}>{today}</Text>
@@ -154,14 +151,14 @@ export default function HomeScreen() {
           </View>
 
           <View style={{ flexDirection: "row", gap: 16, marginBottom: 10 }}>
-            <Link href="/calendar" asChild style={[styles.card, { flex: 1 }]}>
+            <Link href="/Profile" asChild style={[styles.card, { flex: 1 }]}>
               <TouchableOpacity>
                 <Text style={[styles.dayText, { textAlign: "center" }]}>
                   Profile
                 </Text>
               </TouchableOpacity>
             </Link>
-            <Link href="/calendar" asChild style={[styles.card, { flex: 1 }]}>
+            <Link href="/Calendar" asChild style={[styles.card, { flex: 1 }]}>
               <TouchableOpacity>
                 <Text style={[styles.dayText, { textAlign: "center" }]}>
                   Statistics
@@ -172,43 +169,45 @@ export default function HomeScreen() {
 
           <Text style={styles.subtitle}>Weekly Workout Plan</Text>
 
-          {/* --- REPLACED FLATLIST WITH THIS MAP --- */}
           {plan.map((item) => {
-            const completed = completedDays[item.id];
-            const isCompleted = completed?.done;
+  const completed = completedDays[item.id];
+  const isCompleted = completed?.done;
 
-            return (
-              <Link
-                key={item.id}
-                href={{
-                  pathname: "/day/[id]",
-                  params: { id: item.id, dayName: item.day },
-                }}
-                asChild
-              >
-                <TouchableOpacity style={styles.card}>
-                  <View style={globalStyles.cardContent}>
-                    <Text
-                      style={[
-                        styles.dayText,
-                        { marginTop: 20, marginBottom: 20 },
-                      ]}
-                    >
-                      {item.day} - {item.focus}
-                    </Text>
-                  </View>
+  return (
+    /* ✅ Fixed: Points directly to `/[id]` using the numeric value string.
+       If your dynamic file is strictly at the root tier (`app/[id].tsx`), 
+       it's safer to use an explicit route object to prevent conflict index routing:
+    */
+    <Link 
+      key={item.id} 
+      href={{
+        pathname: "/[id]",
+        params: { id: item.id }
+      }} 
+      asChild
+    >
+      <TouchableOpacity style={styles.card}>
+        <View style={globalStyles.cardContent}>
+          <Text
+            style={[
+              styles.dayText,
+              { marginTop: 20, marginBottom: 20 },
+            ]}
+          >
+            {item.day} - {item.focus}
+          </Text>
+        </View>
 
-                  {isCompleted ? (
-                    <Text style={[styles.done, { fontSize: 16 }]}>Done</Text>
-                  ) : (
-                    <Text style={styles.arrow}>→</Text>
-                  )}
-                </TouchableOpacity>
-              </Link>
-            );
-          })}
+        {isCompleted ? (
+          <Text style={[styles.done, { fontSize: 16 }]}>Done</Text>
+        ) : (
+          <Text style={styles.arrow}>→</Text>
+        )}
+      </TouchableOpacity>
+    </Link>
+  );
+})}
 
-          {/* Footer Component from FlatList moved here */}
           <TouchableOpacity
             style={[globalStyles.backButton, { marginTop: 20 }]}
             onPress={() => {
