@@ -33,7 +33,7 @@ export default function RootLayout() {
     <>
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: '#FFF' },
+          headerStyle: { backgroundColor: 'rgba(255, 255, 255, 0.22)' },
           headerTitleStyle: { fontWeight: 'bold' },
           headerRight: () => (
             <TouchableOpacity
