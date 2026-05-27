@@ -104,11 +104,11 @@ export default function RootLayout() {
 const styles = StyleSheet.create({
   extraBar: {
     position: 'absolute',
-    top: 100, // will sit right under header (adjust if needed)
-    right:0,
+    top: 0, // will sit right under header (adjust if needed)
+    right: 100,
 
     flexDirection: 'column',
-    zIndex: 10, // above content but below header
+    zIndex: 0,
 
   },
   extraBarText: {
