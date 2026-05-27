@@ -35,6 +35,7 @@ export default function RootLayout() {
         screenOptions={{
           headerStyle: { backgroundColor: 'rgba(255, 255, 255, 0.22)' },
           headerTitleStyle: { fontWeight: 'bold' },
+          contentStyle: { backgroundColor: 'rgba(255, 255, 255, 0.22)' },
           headerRight: () => (
             <TouchableOpacity
               onPress={() => setShowExtraBar((prev) => !prev)}
