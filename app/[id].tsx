@@ -434,7 +434,7 @@ export default function DayDetail() {
         contentContainerStyle={{
           flexGrow: 1,
           padding: 16,
-          paddingTop: headerHeight + 10,
+          paddingTop: headerHeight,
           paddingBottom: 100,
           backgroundColor: themedColors.back,
         }}

@@ -137,7 +137,7 @@ export default function HomeScreen() {
     >
       <ScrollView
         style={{ backgroundColor: themedColors.back }}
-        contentContainerStyle={{ flexGrow: 1, paddingTop: headerHeight + 10 }}
+        contentContainerStyle={{ flexGrow: 1, paddingTop: headerHeight }}
         showsVerticalScrollIndicator={false}
       >
         <View style={[styles.container, { flex: 1, paddingBottom: 20 }]}>

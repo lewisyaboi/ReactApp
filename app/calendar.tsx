@@ -87,7 +87,7 @@ export default function CalendarScreen() {
         style={{ backgroundColor: themedColors.back }} 
         contentContainerStyle={{ 
           flexGrow: 1,
-          paddingTop: headerHeight + 10,
+          paddingTop: headerHeight,
           paddingBottom: 40,
         }} 
         showsVerticalScrollIndicator={false}
